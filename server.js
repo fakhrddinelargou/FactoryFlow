@@ -1,8 +1,19 @@
-const express = require('express');
-const app = express()
+const app = require('./src/app');
+require('dotenv').config();
+const connectDB = require('./src/config/db');
+const checkEnv = require('./src/config/env');
 const PORT = process.env.PORT || 3000; 
 
+// REQUIRED ENV
+checkEnv()
 
-app.listen(PORT , ()=>{
-console.log(`connection successfuly with PORT : ${PORT}`)
+
+// NOT FOUND DIRCTION
+
+connectDB().then(()=>{
+    app.listen(PORT , ()=>{
+    console.log(`connection successfuly with PORT : ${PORT}`)
+    })
+}).catch(err => {console.log(err);
 })
+

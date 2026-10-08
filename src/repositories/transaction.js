@@ -1,6 +1,6 @@
-import mongoose from 'mongoose';
+const mongoose =  require('mongoose');
 
-export const withTransaction = async (callback) => {
+const withTransaction = async (callback) => {
   const session = await mongoose.startSession();      
 
   try {

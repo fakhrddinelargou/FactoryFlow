@@ -4,7 +4,7 @@ const authorize = (req, res, next) => {
         return res.status(401).json({ error: 'something wrong' })
     }
     if (user.role !== 'admin') {
-        return res.status(403).json({ error: 'tou dont have access' })
+        return res.status(403).json({ error: 'you dont have access' })
     }
     next()
 }

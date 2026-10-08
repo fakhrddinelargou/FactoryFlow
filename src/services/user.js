@@ -1,5 +1,4 @@
 const { create, findUserByEmail } = require('../repositories/user');
-const withTransaction = require('../repositories/transaction');
 const { hash } = require('bcrypt');
 const AppError = require('../utils/AppError')
 
@@ -8,7 +7,6 @@ const AppError = require('../utils/AppError')
 async function createOperator({ first_name, last_name, email, password }) {
 
         const existUser = await findUserByEmail(email);
-        console.log(existUser);
 
         if (existUser) {
             throw new AppError('Email already existed', 409)

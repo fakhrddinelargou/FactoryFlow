@@ -12,4 +12,4 @@ async function findUserByEmail(email) {
 async function findUserById (id){
 return await User.findById(id)
 }
-module.exports = {create  ,  findUserByEmail}
+module.exports = {create  ,  findUserByEmail , findUserById}

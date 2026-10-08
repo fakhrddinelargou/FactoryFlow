@@ -3,13 +3,14 @@ const app = express();
 
 
 const installationRoutes = require('./routes/installation.routes');
-app.use(express.json());                              // ✅ 9bel routes
-
+const userRoutes = require('./routes/user.routes');
+app.use(express.json());                              
 // MIDDLEWARES
 const notFound = require('./middlewares/notFound');
 const ErrorHandler = require('./middlewares/ErrorHandler');
 // ROUTING
 app.use('/api/installation', installationRoutes);
+app.use('/api/users', userRoutes);
 
 app.use(notFound);
 app.use(ErrorHandler);

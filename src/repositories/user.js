@@ -5,5 +5,11 @@ async function create(data, session) {
   return user;
 }
 
+async function findUserByEmail(email) {
+  return await User.findOne({email});
+}
 
-module.exports = {create}
+async function findUserById (id){
+return await User.findById(id)
+}
+module.exports = {create  ,  findUserByEmail}

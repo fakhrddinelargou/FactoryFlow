@@ -3,7 +3,7 @@ const Installation = require('../models/Installation');
 
 const getOrCreate = async (session) =>
   await Installation.findOneAndUpdate(
-    { key: 'singleton' },
+    { key: 'singleton' }, 
     { $setOnInsert: { key: 'singleton' } },
     { returnDocument: 'after', upsert: true, session }
   );

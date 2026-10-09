@@ -1,33 +1,37 @@
-const { findUserByEmail } = require('../repositories/user')
-const jwt = require('jsonwebtoken')
-const AppError = require('../utils/AppError');
+const jwt = require('jsonwebtoken');
 const { compare } = require('bcrypt');
+const { findByEmailWithPassword } = require('../repositories/user');
+const AppError = require('../utils/AppError');
 
-const loginUser = async ({email , password}) => {
-    const user = await findUserByEmail(email);
+const INVALID_CREDENTIALS = 'Email ou mot de passe incorrect';
 
-    if (!user) {
-        throw new AppError('Email or Password incorrect', 400)
-    }
+const loginUser = async ({ email, password }) => {
+  const user = await findByEmailWithPassword(email);
+  if (!user) {
+    throw new AppError(INVALID_CREDENTIALS, 401);
+  }
 
-    const isMatch = checkPassword(password,user.password);
+  const isMatch = await compare(password, user.password);
+  if (!isMatch) {
+    throw new AppError(INVALID_CREDENTIALS, 401);
+  }
 
-    if (!isMatch) {
-        throw new AppError('Email ou mot de passe incorrect', 401);
-    }
+  const token = jwt.sign(
+    { id: user.id, role: user.role },
+    process.env.JWT_SECRET,
+    { expiresIn: process.env.JWT_EXPIRES_IN || '1d' }
+  );
 
-    const token = jwt.sign({id : user.id , first_name : user.first_name , last_name : user.last_name , role : user.role},process.env.JWT_SECRET ,{ expiresIn: process.env.JWT_EXPIRES_IN })
+  return {
+    token,
+    user: {
+      id: user.id,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      email: user.email,
+      role: user.role,
+    },
+  };
+};
 
-    return {
-        token : token,
-        user : {id : user.id , first_name : user.first_name , last_name : user.last_name , role : user.role}
-    }
-}
-
-
-
-function checkPassword(password , hash){
-  return compare(password , hash);
-}
-
-module.exports = {loginUser}
+module.exports = { loginUser };

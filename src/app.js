@@ -8,6 +8,7 @@ const authRoutes = require('./routes/auth.routes');
 const materialRoutes = require('./routes/material.routes');
 const stockMovmentRoutes = require('./routes/stockMovment.routes');
 const productRoutes = require('./routes/product.routes');
+const orderRoutes = require('./routes/productionOrder.routes');
 
 app.use(express.json());                              
 // MIDDLEWARES
@@ -20,6 +21,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/materials', materialRoutes);
 app.use('/api/stock-movements', stockMovmentRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/orders', orderRoutes);
 
 
 app.use(notFound);

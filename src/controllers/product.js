@@ -1,4 +1,4 @@
-const { handleCreateProduct , handleUpdateProduct} = require('../services/product')
+const { handleCreateProduct , handleUpdateProduct , handGetProductById , handGetProduct} = require('../services/product')
 
 const create = async (req, res) => {
   const product = await handleCreateProduct(req.body);
@@ -10,5 +10,14 @@ const update = async (req, res) => {
   res.status(200).json({ success: true, data: product });
 }
 
+const getProduct = async (req,res) => {
+  const products = await handGetProduct();
+  res.status(200).json({success : true  ,  data : products});
+}
 
-module.exports = { create, update }
+const getProductById = async (req,res) => {
+  const product = await handGetProductById(req.params.id);
+  res.status(200).json({success : true  ,  data : product});
+}
+
+module.exports = { create, update , getProduct ,getProductById}

@@ -106,4 +106,5 @@ async function handleGetMaterial(id) {
 async function handleFindMaterialsBelowThreshold() {
     return await findMaterialsBelowThreshold();
 }
+
 module.exports = { handleCreation, handleUpdate, handleUpdateQuantity, handleGetMaterials ,handleGetMaterial ,handleFindMaterialsBelowThreshold }

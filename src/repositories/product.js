@@ -18,8 +18,6 @@ async function findByRef(ref) {
     return await Product.findOne({reference : ref});
 }
 
-
-
 async function findProductById(id) {
     return await Product.findById(id);
 }
@@ -28,4 +26,13 @@ async function findProductByRefExcept(reference, id) {
   return Product.findOne({ reference, _id: { $ne: id } });
 }
 
-module.exports = {createProduct ,findByRef,findProductByRefExcept,updateProduct,findProductById }
+async function getProduct() {
+    return await Product.find().sort({createdAt : -1}).populate('composition.material' , 'reference name unit')
+}
+
+async function getProductById(id) {
+    return await Product.findById(id).sort({createdAt : -1}).populate('composition.material' , 'reference name unit')
+}
+
+
+module.exports = {createProduct ,findByRef,findProductByRefExcept,updateProduct,findProductById , getProduct, getProductById }

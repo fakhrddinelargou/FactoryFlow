@@ -1,4 +1,4 @@
-const { findByRef, createProduct, findProductById , findProductByRefExcept, updateProduct } = require('../repositories/product');
+const { findByRef, createProduct, findProductById ,getProductById , findProductByRefExcept, updateProduct ,getProduct } = require('../repositories/product');
 const withTransaction = require('../repositories/transaction');
 const AppError = require('../utils/AppError');
 const { findMaterialsByIds } = require('../repositories/Material');
@@ -42,4 +42,14 @@ async function handleUpdateProduct(id, data) {
   return updateProduct(id, data);
 }
 
-module.exports = { handleCreateProduct, handleUpdateProduct }
+async function handGetProduct() {
+    return await getProduct();
+}
+
+async function handGetProductById(id) {
+        const product = await getProductById(id);
+    if (!product) throw new AppError('product not found', 404)
+    return product;
+}
+
+module.exports = { handleCreateProduct, handGetProductById,handleUpdateProduct , handGetProduct}

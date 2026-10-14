@@ -1,9 +1,25 @@
 const ProductionOrder = require('../models/ProductionOrder');
 
-async function createOrder(data , session) {
-    return await ProductionOrder.create([data] , {session});
+async function createOrder(data) {
+    return await ProductionOrder.create(data);
 }
 
 
+async function updateOrder(data, id) {
+    return await ProductionOrder.findByIdAndUpdate(id, data, { returnDocument: 'after', runValidators: true });
+}
 
-module.exports = {createOrder}
+async function findOrderById(id) {
+    return await ProductionOrder.findById(id)
+}
+
+async function getAllOrders(skip, limit, query) {
+    return await ProductionOrder.find(query).sort({ createdAt: -1 })
+    .populate('composition.material', 'reference name unit')
+    .populate('createdBy', 'first_name last_name')
+    .populate('assignedTo', 'first_name last_name')
+    .populate('product', 'reference name')
+    .skip(skip).limit(limit)
+
+}
+module.exports = { createOrder, updateOrder, getAllOrders, findOrderById }

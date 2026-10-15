@@ -1,9 +1,9 @@
-const { createOrder , updateOrder , findOrderById ,getAllOrders } = require('../repositories/productionOrder');
+const { createOrder , updateOrder , findOrderById ,getAllOrders, getOrderByOpirater } = require('../repositories/productionOrder');
 const {findProductById} = require('../repositories/product');
 const {findUserById} = require('../repositories/user');
+const AppError = require('../utils/AppError');
 
 const withTransaction = require('../repositories/transaction');
-const AppError = require('../utils/AppError');
 
 
 async function handleCreateOrder(data, userId) {
@@ -64,4 +64,36 @@ if (query.from || query.to) {
   return await getAllOrders(skip,query.limit,filter);
 }
 
-module.exports = {handleCreateOrder , handleUpdateOrder ,handleGetOrders}
+async function handleGetOrdersByOperaterId(id,query) {
+  const filter = {}
+  const user = await findUserById(id);
+  console.log(user);
+  
+  if(user.role === 'admin')throw new AppError('that user not operater' , 400);
+  filter.assignedTo = id;
+  if(query.status){
+    filter.status = query.status;
+  }
+  console.log(filter);
+  return await getOrderByOpirater(filter)
+  
+}
+
+
+async function handleGetOrderById(id , userId) {
+  
+  const user = await findUserById(userId);
+  if(user.role === 'admin'){
+    return await findOrderById(id)
+  }
+  const filter = {}
+  filter.assignedTo = userId;
+  filter._id = id;
+
+  console.log(filter);
+  
+  
+  return await getOrderByOpirater(filter);
+}
+
+module.exports = {handleCreateOrder , handleUpdateOrder ,handleGetOrders ,handleGetOrdersByOperaterId , handleGetOrderById}

@@ -75,4 +75,9 @@ const listOrdersQuerySchema = z
     path: ['from'],
   });
 
-module.exports = { createOrderSchema, updateOrderSchema, listOrdersQuerySchema };
+  const getMineWithStatus = z.object({
+        status: z
+      .enum(['PLANNED', 'IN_PROGRESS', 'COMPLETED'], { message: 'Statut invalide' })
+      .optional()
+  })
+module.exports = { createOrderSchema, updateOrderSchema, listOrdersQuerySchema , getMineWithStatus };

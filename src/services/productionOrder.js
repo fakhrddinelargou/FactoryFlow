@@ -1,9 +1,11 @@
-const { createOrder , updateOrder , findOrderById ,getAllOrders, getOrderByOpirater } = require('../repositories/productionOrder');
+const { createOrder , updateOrder , findOrderById ,getAllOrders, getOrderByOpirater ,updateStatusOrder } = require('../repositories/productionOrder');
 const {findProductById} = require('../repositories/product');
 const {findUserById} = require('../repositories/user');
+const {createMovement} = require('../repositories/stockMovement');
 const AppError = require('../utils/AppError');
 
 const withTransaction = require('../repositories/transaction');
+const { decrementQuantity } = require('../repositories/Material');
 
 
 async function handleCreateOrder(data, userId) {
@@ -67,14 +69,12 @@ if (query.from || query.to) {
 async function handleGetOrdersByOperaterId(id,query) {
   const filter = {}
   const user = await findUserById(id);
-  console.log(user);
   
   if(user.role === 'admin')throw new AppError('that user not operater' , 400);
   filter.assignedTo = id;
   if(query.status){
     filter.status = query.status;
   }
-  console.log(filter);
   return await getOrderByOpirater(filter)
   
 }
@@ -90,10 +90,54 @@ async function handleGetOrderById(id , userId) {
   filter.assignedTo = userId;
   filter._id = id;
 
-  console.log(filter);
   
   
   return await getOrderByOpirater(filter);
 }
 
-module.exports = {handleCreateOrder , handleUpdateOrder ,handleGetOrders ,handleGetOrdersByOperaterId , handleGetOrderById}
+async function handleStartOrder(id,userId) {
+  const order = await findOrderById(id);
+  return await startOrder(order,userId)
+}
+
+async function startOrder(order, userId) {
+  if (order.status !== 'PLANNED') {
+    throw new AppError('Seul un ordre PLANNED peut être démarré', 409);
+  }
+
+  const requirements = calculateRequirements(order.composition, order.quantity);
+
+  return withTransaction(async (session) => {
+    for (const item of requirements) {
+      const updated = await decrementQuantity(item.material, item.required, session);
+      if (!updated) {
+        throw new AppError('Stock insuffisant', 409);
+      }
+
+      await createMovement(
+        {
+          material: item.material,
+          type: 'OUT',
+          quantity: item.required,
+          reason: 'démarrage ordre',
+          productionOrder: order._id,
+          createdBy: userId,
+        },
+        session
+      );
+    }
+
+    return updateStatusOrder(order._id, 'IN_PROGRESS', session);
+  });
+}
+
+
+const calculateRequirements = (composition, quantity) =>
+  composition.map((item) => ({
+    material: item.material._id ?? item.material,
+    required: item.quantity * quantity,
+  }));
+
+
+
+module.exports = {handleCreateOrder , handleUpdateOrder ,handleGetOrders ,handleGetOrdersByOperaterId , handleGetOrderById ,handleStartOrder}

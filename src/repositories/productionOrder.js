@@ -27,11 +27,16 @@ async function getAllOrders(skip, limit, query) {
 
 }
 
-async function getOrderByOpirater(filter) {
+async function getOrderByOpirater(filter) {  
     return await ProductionOrder.find(filter)
         .populate('composition.material', 'reference name unit')
         .populate('createdBy', 'first_name last_name')
         .populate('assignedTo', 'first_name last_name')
         .populate('product', 'reference name')
 }
-module.exports = { createOrder, updateOrder, getAllOrders, findOrderById, getOrderByOpirater }
+
+async function updateStatusOrder(id , st) {
+    return await ProductionOrder.findByIdAndUpdate(id,{status : st},{returnDocument : 'after' , runValidators : true})
+}
+
+module.exports = { createOrder, updateOrder, getAllOrders, findOrderById, getOrderByOpirater ,updateStatusOrder}

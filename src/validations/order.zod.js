@@ -80,4 +80,5 @@ const listOrdersQuerySchema = z
       .enum(['PLANNED', 'IN_PROGRESS', 'COMPLETED'], { message: 'Statut invalide' })
       .optional()
   })
-module.exports = { createOrderSchema, updateOrderSchema, listOrdersQuerySchema , getMineWithStatus };
+
+module.exports = { createOrderSchema, updateOrderSchema, listOrdersQuerySchema , getMineWithStatus};

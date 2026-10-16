@@ -8,9 +8,7 @@ async function findMaterialByRef(reference) {
     return await Material.findOne({reference : reference});
 }
 
-async function findMaterialById(id) {
-    console.log(id);
-    
+async function findMaterialById(id) {    
     return await Material.findById(id);
 }
 
@@ -31,11 +29,19 @@ async function findMaterialsBelowThreshold() {
 }
 
 async function updateQuantity(id , quantity , session) {
-    return await Material.findByIdAndUpdate(id,{$inc : {availableQuantity : quantity }},{returnDocument : 'after' ,runValidators : true , session })
+    return await Material.findByIdAndUpdate({_id : id , availableQuantity: { $gte: quantity }},{$inc : {availableQuantity : quantity }},{returnDocument : 'after' ,runValidators : true , session })
 }
 
 async function findMaterialsByIds(ids) {
   return Material.find({ _id: { $in: ids } });
 }
 
-module.exports = {createMaterial ,findMaterialByRef , findMaterialById , updateMaterial , findMaterialsByIds ,updateQuantity , getMaterial , findMaterialsBelowThreshold}
+async function decrementQuantity(id, quantity, session) {
+  return Material.findOneAndUpdate(
+    { _id: id, availableQuantity: { $gte: quantity } },   
+    { $inc: { availableQuantity: -quantity } },           
+    { returnDocument: 'after', session }
+  );
+}
+
+module.exports = {createMaterial ,findMaterialByRef , findMaterialById , updateMaterial , findMaterialsByIds ,updateQuantity,decrementQuantity , getMaterial , findMaterialsBelowThreshold}

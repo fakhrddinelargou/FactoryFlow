@@ -1,4 +1,4 @@
-const {handleCreateOrder , handleUpdateOrder , handleGetOrders, handleGetOrdersByOperaterId , handleGetOrderById} =  require('../services/productionOrder');
+const {handleCreateOrder , handleUpdateOrder ,handleStartOrder, handleGetOrders, handleGetOrdersByOperaterId , handleGetOrderById} =  require('../services/productionOrder');
 
 
 
@@ -23,10 +23,15 @@ const getOperaterOrders = async (req,res) => {
 }
 
 const getByOrderId = async (req,res) => {
-    console.log(req.params.id , req.user.id);
-    
     const orders = await handleGetOrderById(req.params.id , req.user.id);
     return res.status(200).json({success : true , data : orders})
 }
 
-module.exports = {create ,  update , get , getOperaterOrders ,getByOrderId}
+
+const startOrder = async (req,res) => {    
+    const result = await handleStartOrder(req.params.id , req.user.id);
+    return res.status(200).json({success : true, data : result})
+}
+
+
+module.exports = {create ,  update , get , getOperaterOrders ,getByOrderId, startOrder}

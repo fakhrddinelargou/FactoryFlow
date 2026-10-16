@@ -1,6 +1,6 @@
 const { z } = require('zod');
 
-const installSchema = z.object({
+const userSchema = z.object({
   first_name: z
     .string({ required_error: 'Le prénom est requis' })
     .trim()
@@ -28,4 +28,18 @@ const installSchema = z.object({
     .regex(/[^A-Za-z0-9]/, 'Au moins un caractère spécial'),
 });
 
-module.exports = { installSchema };
+
+const loginSchema = z.object({
+  email: z
+    .string({ required_error: "L'email est requis" })
+    .trim()
+    .toLowerCase()
+    .email('Email invalide'),
+
+  password: z
+    .string({ required_error: 'Le mot de passe est requis' })
+    .min(1, 'Le mot de passe est requis'),
+});
+
+
+module.exports = { userSchema ,  loginSchema };

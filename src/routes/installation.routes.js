@@ -1,9 +1,11 @@
 const express = require('express');
-const { install ,getStatus } = require('../controllers/installation');
 const router = express.Router();
+const { install ,getStatus } = require('../controllers/installation');
 const asyncHandler = require('../utils/AsyncHandler');
+const {validateBody} = require('../middlewares/validate');
+const { userSchema } = require('../validations/user.zod');
 
 router.get('/status', asyncHandler(getStatus));
-router.post('/', asyncHandler(install));
+router.post('/', validateBody(userSchema) ,  asyncHandler(install));
 
 module.exports = router

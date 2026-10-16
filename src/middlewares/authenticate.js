@@ -22,7 +22,7 @@ async function authMiddleware(req, res, next) {
             return res.status(401).json({ status: 'error', message: 'Utilisateur introuvable' });
         }
 
-        req.user = { id: user.id, email: user.email, full_name: user.full_name };
+        req.user = { id: user.id, email: user.email, first_name: user.first_name , last_name: user.last_name , role : user.role };
 
         next();
     } catch (err) {

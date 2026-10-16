@@ -1,6 +1,7 @@
 const installationService = require('../services/installation');
-const { installSchema } = require('../validations/installation.zod');
 const AppError = require('../utils/AppError');
+
+
 const getStatus =async (req, res) => {
   const status = await installationService.getStatus();
   res.status(200).json({ success: true, data: status });
@@ -8,7 +9,7 @@ const getStatus =async (req, res) => {
 
 const install = async (req, res) => {
     console.log(req.body);
-    const validatoinData = installSchema.safeParse(req.body)
+    const validatoinData = userSchema.safeParse(req.body)
     if(!validatoinData.success){
      throw new AppError(validatoinData.error.issues?.[0]?.message , 400)
     }
